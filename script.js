@@ -76,6 +76,7 @@ class App {
         // changing from running to cicling
         
         inputType.addEventListener('change', this._toggleElevationField);
+        containerWorkouts.addEventListener('click', this._moveToPopup.bind(this));
     }
 
     _getPosition() {
@@ -245,6 +246,22 @@ class App {
 
         form.insertAdjacentHTML('afterend', html);
     }
+
+    _moveToPopup(e) {
+        const workoutEl = e.target.closest('.workout');
+        if(!workoutEl) return;
+
+        const workout = this.#workouts.find(work => work.id === workoutEl.dataset.id);
+        //leaflet method
+        this.#map.setView(workout.coords, 13, {
+            animate: true,
+            pan: {
+                duration: 1,
+            }
+        });
+    }
+
+
 }
 
 // storing a new App inside the app variable
