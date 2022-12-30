@@ -68,13 +68,19 @@ class App {
     #workouts = [];
 
     constructor() {
+
+        // Get the position
         this._getPosition();
+
+        // Get data from local storage
+
+        this._getLocalStorage();
+
         // we have to bind the word this on the method called in the eventListener because it originally points to where it is called, which is 
         // the form, not the App.
+        // Event handlers
+
         form.addEventListener('submit',this._newWorkout.bind(this));
-        
-        // changing from running to cicling
-        
         inputType.addEventListener('change', this._toggleElevationField);
         containerWorkouts.addEventListener('click', this._moveToPopup.bind(this));
     }
@@ -108,6 +114,10 @@ class App {
         // we take the marker from the main function and add it to the click event listener
     
         this.#map.on('click', this._showForm.bind(this));
+
+        this.#workouts.forEach(work => {
+            this._renderWorkoutMarker(work);
+        });
     }
 
     _showForm(mapE) {
@@ -185,6 +195,8 @@ class App {
 
         this._hideForm();
 
+        this._setLocalStorage();
+
         }
 
     _renderWorkoutMarker(workout) {
@@ -261,7 +273,25 @@ class App {
         });
     }
 
+    _setLocalStorage(){
+        localStorage.setItem('workouts', JSON.stringify(this.#workouts));
+    }
 
+    _getLocalStorage() {
+       const data = JSON.parse(localStorage.getItem('workouts'));
+       console.log(data);
+
+       if(!data) return;
+
+       this.#workouts = data;
+
+       this.#workouts.forEach(work => this._renderWorkout(work));
+    }
+
+    reset() {
+        localStorage.removeItem('workouts');
+        location.reload();
+    }
 }
 
 // storing a new App inside the app variable
